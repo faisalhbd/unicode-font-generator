@@ -189,7 +189,7 @@
       <label>Font Color:</label>
       <div class="presets" id="presets"></div>
       <div class="custom-color-wrap">
-        <input type="color" id="customColor" value="#000000" oninput="setCustomColor(this.value)" />
+        <input type="color" id="customColor" value="#FFC0CB" oninput="setCustomColor(this.value)" />
         <span class="custom-label">Custom</span>
       </div>
     </div>
@@ -201,7 +201,7 @@
 
   <script>
     const PRESETS = [
-      { color: '#000000', label: 'Black' },
+      { color: '#FFC0CB', label: 'Pink' },
       { color: '#ffffff', label: 'White' },
       { color: '#e22222', label: 'Red' },
       { color: '#1877f2', label: 'Blue' },
@@ -213,7 +213,7 @@
       { color: '#ffd700', label: 'Gold' },
     ];
 
-    let currentColor = '#000000';
+    let currentColor = '#FFC0CB';
 
     function buildPresets() {
       const wrap = document.getElementById('presets');
