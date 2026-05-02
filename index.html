@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Unicode Font Generator – MYFLiXBD</title>
+  <title>Unicode Font Generator – MYCINCEBD</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -181,7 +181,7 @@
     <p class="subtitle">Type your text — pick a color — copy any style for Facebook</p>
 
     <div class="input-wrap">
-      <input type="text" id="inp" value="MYFLiXBD.COM" oninput="gen()" placeholder="Type here..." />
+      <input type="text" id="inp" value="𝐌𝐲𝐜𝐢𝐧𝐞𝐛𝐝.𝐜𝐨𝐦" oninput="gen()" placeholder="Type here..." />
       <button class="clear-btn" onclick="document.getElementById('inp').value='';gen()">Clear</button>
     </div>
 
@@ -196,7 +196,7 @@
 
     <div class="grid" id="out"></div>
 
-    <footer>Unicode Font Generator &copy; MYFLiXBD.COM</footer>
+    <footer>Unicode Font Generator &copy; 𝐌𝐲𝐜𝐢𝐧𝐞𝐛𝐝.𝐜𝐨𝐦</footer>
   </div>
 
   <script>
@@ -290,7 +290,7 @@
     function tr(input, fn) { return [...input].map(fn).join(''); }
 
     function gen() {
-      const v = document.getElementById('inp').value || 'MYFLiXBD.COM';
+      const v = document.getElementById('inp').value || '𝐌𝐲𝐜𝐢𝐧𝐞𝐛𝐝.𝐜𝐨𝐦';
       document.getElementById('out').innerHTML = styles.map((s, i) => {
         const r = tr(v, s.fn);
         return `
