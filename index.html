@@ -15,10 +15,7 @@
       padding: 2rem 1rem;
     }
 
-    .container {
-      max-width: 700px;
-      margin: 0 auto;
-    }
+    .container { max-width: 700px; margin: 0 auto; }
 
     h1 {
       text-align: center;
@@ -39,14 +36,14 @@
     .input-wrap {
       display: flex;
       gap: 10px;
-      margin-bottom: 1.8rem;
+      margin-bottom: 1rem;
     }
 
     input[type="text"] {
       flex: 1;
       font-size: 1rem;
       padding: 12px 16px;
-      border: 2px solid #e22;
+      border: 2px solid #333;
       border-radius: 8px;
       background: #1a1a1a;
       color: #fff;
@@ -54,7 +51,7 @@
       transition: border-color 0.2s;
     }
 
-    input[type="text"]:focus { border-color: #ff4444; }
+    input[type="text"]:focus { border-color: #e22; }
 
     .clear-btn {
       padding: 12px 18px;
@@ -69,6 +66,53 @@
 
     .clear-btn:hover { border-color: #e22; color: #e22; }
 
+    .color-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 1.6rem;
+      flex-wrap: wrap;
+    }
+
+    .color-bar label {
+      font-size: 0.82rem;
+      color: #888;
+      white-space: nowrap;
+    }
+
+    .presets { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .preset {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: transform 0.15s, border-color 0.15s;
+    }
+
+    .preset:hover { transform: scale(1.18); }
+    .preset.active { border-color: #fff; transform: scale(1.18); }
+
+    .custom-color-wrap {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    input[type="color"] {
+      width: 36px;
+      height: 28px;
+      border: none;
+      border-radius: 6px;
+      padding: 2px;
+      background: #1a1a1a;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .custom-label { font-size: 0.78rem; color: #666; }
+
     .grid { display: flex; flex-direction: column; gap: 10px; }
 
     .card {
@@ -82,11 +126,11 @@
       transition: border-color 0.2s;
     }
 
-    .card:hover { border-color: #e22; }
+    .card:hover { border-color: #444; }
 
     .style-label {
       font-size: 11px;
-      color: #666;
+      color: #555;
       letter-spacing: 0.06em;
       text-transform: uppercase;
       margin-bottom: 6px;
@@ -95,19 +139,19 @@
     .preview-text {
       font-size: 1.4rem;
       font-weight: 700;
-      color: #e22;
       letter-spacing: 0.03em;
       word-break: break-all;
+      transition: color 0.2s;
     }
 
     .copy-btn {
       flex-shrink: 0;
       margin-left: 12px;
       padding: 7px 18px;
-      border: 2px solid #e22;
+      border: 2px solid #444;
       border-radius: 6px;
       background: transparent;
-      color: #e22;
+      color: #aaa;
       font-size: 0.85rem;
       font-weight: 600;
       cursor: pointer;
@@ -115,14 +159,14 @@
       white-space: nowrap;
     }
 
-    .copy-btn:hover { background: #e22; color: #fff; }
-    .copy-btn.copied { background: #e22; color: #fff; }
+    .copy-btn:hover { border-color: #e22; color: #e22; }
+    .copy-btn.copied { background: #e22; border-color: #e22; color: #fff; }
 
     footer {
       text-align: center;
       margin-top: 2.5rem;
       font-size: 0.75rem;
-      color: #444;
+      color: #333;
     }
 
     @media (max-width: 480px) {
@@ -134,11 +178,20 @@
 <body>
   <div class="container">
     <h1>Unicode Font Generator</h1>
-    <p class="subtitle">Type your text — copy any style for Facebook posts</p>
+    <p class="subtitle">Type your text — pick a color — copy any style for Facebook</p>
 
     <div class="input-wrap">
       <input type="text" id="inp" value="MYFLiXBD.COM" oninput="gen()" placeholder="Type here..." />
       <button class="clear-btn" onclick="document.getElementById('inp').value='';gen()">Clear</button>
+    </div>
+
+    <div class="color-bar">
+      <label>Font Color:</label>
+      <div class="presets" id="presets"></div>
+      <div class="custom-color-wrap">
+        <input type="color" id="customColor" value="#000000" oninput="setCustomColor(this.value)" />
+        <span class="custom-label">Custom</span>
+      </div>
     </div>
 
     <div class="grid" id="out"></div>
@@ -147,17 +200,63 @@
   </div>
 
   <script>
+    const PRESETS = [
+      { color: '#000000', label: 'Black' },
+      { color: '#ffffff', label: 'White' },
+      { color: '#e22222', label: 'Red' },
+      { color: '#1877f2', label: 'Blue' },
+      { color: '#23c45e', label: 'Green' },
+      { color: '#f5a623', label: 'Orange' },
+      { color: '#9b59b6', label: 'Purple' },
+      { color: '#00bcd4', label: 'Cyan' },
+      { color: '#ff69b4', label: 'Pink' },
+      { color: '#ffd700', label: 'Gold' },
+    ];
+
+    let currentColor = '#000000';
+
+    function buildPresets() {
+      const wrap = document.getElementById('presets');
+      PRESETS.forEach((p, i) => {
+        const btn = document.createElement('div');
+        btn.className = 'preset' + (i === 0 ? ' active' : '');
+        btn.style.background = p.color;
+        btn.title = p.label;
+        if (p.color === '#ffffff') btn.style.border = '2px solid #444';
+        btn.onclick = () => {
+          document.querySelectorAll('.preset').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentColor = p.color;
+          document.getElementById('customColor').value = p.color;
+          applyColor();
+        };
+        wrap.appendChild(btn);
+      });
+    }
+
+    function setCustomColor(val) {
+      currentColor = val;
+      document.querySelectorAll('.preset').forEach(b => b.classList.remove('active'));
+      applyColor();
+    }
+
+    function applyColor() {
+      document.querySelectorAll('.preview-text').forEach(el => {
+        el.style.color = currentColor;
+      });
+    }
+
     const styles = [
-      { label: "Bold",          fn: c => cv(c, 0x1D400, 0x1D41A, 0x1D7CE) },
-      { label: "Italic",        fn: c => cv(c, 0x1D434, 0x1D44E, null) },
-      { label: "Bold Italic",   fn: c => cv(c, 0x1D468, 0x1D482, null) },
-      { label: "Monospace",     fn: c => cv(c, 0x1D670, 0x1D68A, 0x1D7F6) },
-      { label: "Double Struck", fn: c => cv(c, 0x1D538, 0x1D552, 0x1D7D8) },
-      { label: "Fraktur",       fn: c => cv(c, 0x1D504, 0x1D51E, null) },
-      { label: "Bold Fraktur",  fn: c => cv(c, 0x1D56C, 0x1D586, null) },
-      { label: "Circled",       fn: c => circ(c) },
-      { label: "Small Caps",    fn: c => sc(c) },
-      { label: "Wide",          fn: c => wide(c) },
+      { label: 'Bold',          fn: c => cv(c, 0x1D400, 0x1D41A, 0x1D7CE) },
+      { label: 'Italic',        fn: c => cv(c, 0x1D434, 0x1D44E, null) },
+      { label: 'Bold Italic',   fn: c => cv(c, 0x1D468, 0x1D482, null) },
+      { label: 'Monospace',     fn: c => cv(c, 0x1D670, 0x1D68A, 0x1D7F6) },
+      { label: 'Double Struck', fn: c => cv(c, 0x1D538, 0x1D552, 0x1D7D8) },
+      { label: 'Fraktur',       fn: c => cv(c, 0x1D504, 0x1D51E, null) },
+      { label: 'Bold Fraktur',  fn: c => cv(c, 0x1D56C, 0x1D586, null) },
+      { label: 'Circled',       fn: c => circ(c) },
+      { label: 'Small Caps',    fn: c => sc(c) },
+      { label: 'Wide',          fn: c => wide(c) },
     ];
 
     function cv(c, U, L, D) {
@@ -196,9 +295,9 @@
         const r = tr(v, s.fn);
         return `
           <div class="card">
-            <div>
+            <div style="flex:1;min-width:0;">
               <div class="style-label">${s.label}</div>
-              <div class="preview-text" id="r${i}">${r}</div>
+              <div class="preview-text" id="r${i}" style="color:${currentColor}">${r}</div>
             </div>
             <button class="copy-btn" id="b${i}" onclick="cp(${i})">Copy</button>
           </div>`;
@@ -215,6 +314,7 @@
       });
     }
 
+    buildPresets();
     gen();
   </script>
 </body>
